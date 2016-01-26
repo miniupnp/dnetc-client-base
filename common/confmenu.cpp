@@ -162,8 +162,8 @@ static int __enumcorenames_wide(const char **corenames,
         char xxx[4+32]; char iname[8];
         strcpy(iname,"n/a");
         if (selcoreValidateCoreIndex(cont_i,idx) == idx)
-          sprintf(iname, "%3d", idx);
-        i = sprintf(xxx,"%s) %-29.29s", iname, corenames[cont_i] );
+          snprintf(iname, sizeof(iname), "%3d", idx);
+        i = snprintf(xxx, sizeof(xxx), "%s) %-29.29s", iname, corenames[cont_i] );
         if (i > colwidth)
           i = colwidth;
         strncpy( &scrline[nextpos], xxx, i );
@@ -211,7 +211,7 @@ static int __enumcorenames(unsigned int cont_i, const char *corename,
       {
         len = 0;
         if (selcoreValidateCoreIndex(cont_i,idx) == idx)
-          len = sprintf(label, "%2d) ", idx);
+          len = snprintf(label, sizeof(label), "%2d) ", idx);
         else
           len = strlen(strcpy(label, "n/a "));
         strncpy( &label[len], corename, sizeof(label)-len );
@@ -250,7 +250,7 @@ static int __enumcorenames(unsigned int cont_i, const char *corename,
       if (ecd->linepos == 0)
       {
         if (ecd->cont_i != cont_i)
-          sprintf(contnamepad, "%-6.6s:", CliGetContestNameFromID(cont_i));
+          snprintf(contnamepad, sizeof(contnamepad), "%-6.6s:", CliGetContestNameFromID(cont_i));
         else
           strcpy(contnamepad,"       ");
       }
@@ -917,7 +917,7 @@ static int __configure( Client *client ) /* returns >0==success, <0==cancelled *
               else if (conf_options[menuoption].type==CONF_TYPE_TIMESTR)
               {
                 int t = *((int *)conf_options[menuoption].thevariable);
-                sprintf(parm, "%d:%02u", (t/60),
+                snprintf(parm, sizeof(parm), "%d:%02u", (t/60),
                                (unsigned int)(((t<0)?(-t):(t))%60) );
                 descr = parm;
                 if (*conf_options[menuoption].defaultsetting)
@@ -947,7 +947,7 @@ static int __configure( Client *client ) /* returns >0==success, <0==cancelled *
                 }
                 else
                 {
-                  sprintf(parm, "%d", thevar );
+                  snprintf(parm, sizeof(parm), "%d", thevar );
                   descr = parm;
                 }
               }
@@ -963,7 +963,7 @@ static int __configure( Client *client ) /* returns >0==success, <0==cancelled *
                 char parm2[128];
                 unsigned int optlen;
                 optionlist[optioncount++] = menuoption;
-                optlen = sprintf(parm2, "%2u) %s%s", optioncount,
+                optlen = snprintf(parm2, sizeof(parm2), "%2u) %s%s", optioncount,
                      conf_options[menuoption].description,
                      (conf_options[menuoption].type == CONF_TYPE_MENU ? "" :
                                                        " ==> " ));
@@ -988,7 +988,7 @@ static int __configure( Client *client ) /* returns >0==success, <0==cancelled *
             char chbuf[sizeof(long)*3];
             menuoption = 0; //-1;
             LogScreenRaw("\n 0) Return to %s\n\nChoice --> ",parentmenuname);
-            if (ConInStr( chbuf, sprintf(chbuf,"%d",optioncount)+1, 0 )!=0)
+            if (ConInStr( chbuf, snprintf(chbuf, sizeof(chbuf), "%d",optioncount)+1, 0 )!=0)
             {
               if (!CheckExitRequestTriggerNoIO())
               {
@@ -1099,11 +1099,11 @@ static int __configure( Client *client ) /* returns >0==success, <0==cancelled *
             const char *ppp;
             long selmin = (long)(conf_options[editthis].choicemin);
             long selmax = (long)(conf_options[editthis].choicemax);
-            sprintf(defaultbuff,"%ld) ", selmax );
+            snprintf(defaultbuff,sizeof(defaultbuff),"%ld) ", selmax );
             ppp = strstr( conf_options[editthis].comments, defaultbuff );
             if (ppp != NULL)
             {
-              sprintf(defaultbuff,"%ld) ", selmin );
+              snprintf(defaultbuff,sizeof(defaultbuff),"%ld) ", selmin );
               ppp = strstr( conf_options[editthis].comments, defaultbuff );
             }
             if (ppp == NULL)
@@ -1148,8 +1148,8 @@ static int __configure( Client *client ) /* returns >0==success, <0==cancelled *
           }
           else //if (conf_options[editthis].type==CONF_TYPE_INT)
           {
-            sprintf(parm, "%d", *((int *)conf_options[editthis].thevariable) );
-            sprintf(defaultbuff, "%d", atoi(conf_options[editthis].defaultsetting));
+            snprintf(parm, sizeof(parm), "%d", *((int *)conf_options[editthis].thevariable) );
+            snprintf(defaultbuff, sizeof(defaultbuff), "%d", atoi(conf_options[editthis].defaultsetting));
             p = defaultbuff;
           }
           LogScreenRaw("Default Setting: %s\n"
@@ -1253,7 +1253,7 @@ static int __configure( Client *client ) /* returns >0==success, <0==cancelled *
         else if (conf_options[editthis].type == CONF_TYPE_TIMESTR)
         {
           int t = *((int *)conf_options[editthis].thevariable);
-          sprintf(parm,"%d:%02u", (t/60),
+          snprintf(parm, sizeof(parm), "%d:%02u", (t/60),
                            (unsigned int)(((t<0)?(-t):(t))%60) );
           LogScreenRaw("Default Setting: %s\n"
                        "Current Setting: %s\n"

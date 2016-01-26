@@ -473,7 +473,7 @@ static char *rfc822Date(char *timestring)
     #undef dow
   }
                       //5    2   4    5   3    3    2  1 1  2   2 = 31
-  sprintf( timestring, "%s, %02d %s %04d %02d:%02d:%02d %c%02d%02d" ,
+  snprintf( timestring, sizeof(timestring), "%s, %02d %s %04d %02d:%02d:%02d %c%02d%02d" ,
        wdaynames[loctime.tm_wday], loctime.tm_mday, monnames[loctime.tm_mon],
        loctime.tm_year+1900, loctime.tm_hour, loctime.tm_min,
        loctime.tm_sec, ((tzdiff<0)?('-'):('+')), abstzdiff/60, abstzdiff%60);
@@ -533,14 +533,14 @@ static int smtp_send_message_header( void * net,
 
   if (errcode == 0) //send the senders address
   {
-    sprintf( buffer, "From: %s", ((fromid)?(fromid):("<>")) );
+    snprintf( buffer, sizeof(buffer), "From: %s", ((fromid)?(fromid):("<>")) );
     if ( put_smtp_line( net, buffer, strlen(buffer) ) )
       errcode = -1;
   }
 
   if (errcode == 0) //send the recipients address
   {
-    sprintf( buffer, "\r\nTo: %s", ((destid)?(destid):("<>")));
+    snprintf( buffer, sizeof(buffer), "\r\nTo: %s", ((destid)?(destid):("<>")));
     if ( put_smtp_line( net, buffer, strlen(buffer) ) )
       errcode = -1;
   }
@@ -549,12 +549,12 @@ static int smtp_send_message_header( void * net,
   {
     if (statsid)
     {
-      sprintf( buffer,"\r\nErrors-to: %s", statsid );
+      snprintf( buffer, sizeof(buffer), "\r\nErrors-to: %s", statsid );
       if ( put_smtp_line( net, buffer, strlen(buffer) ) )
         errcode = -1;
       else
       {
-        sprintf( buffer,"\r\nReply-to: %s", statsid );
+        snprintf( buffer, sizeof(buffer), "\r\nReply-to: %s", statsid );
         if ( put_smtp_line( net, buffer, strlen(buffer)) )
           errcode = -1;
       }
@@ -563,7 +563,7 @@ static int smtp_send_message_header( void * net,
 
   if (errcode == 0) //send the date
   {
-    sprintf( buffer, "\r\nDate: %s"
+    snprintf( buffer, sizeof(buffer), "\r\nDate: %s"
         "\r\nX-Mailer: distributed.net v"CLIENT_VERSIONSTRING
            " client for "CLIENT_OS_NAME_EXTENDED, rfc822Date( buffer + 256 ) );
     if ( put_smtp_line( net, buffer, strlen( buffer ) ) )

@@ -545,7 +545,7 @@ const char *CliGetFullVersionDescriptor(void)
   static char buffer[10+32+sizeof("v"CLIENT_VERSIONSTRING"-XXX-99071523-*dev* client for "CLIENT_OS_NAME_EXTENDED)];
   struct timeval tv; tv.tv_usec = 0;
   tv.tv_sec = CliGetNewestModuleTime();
-  sprintf( buffer, "%s v" CLIENT_VERSIONSTRING "-"
+  snprintf( buffer, sizeof(buffer), "%s v" CLIENT_VERSIONSTRING "-"
          "%c"  /* GUI == "G", CLI == "C" */
          #ifdef CLIENT_SUPPORTS_SMP
 	   #ifdef HAVE_MULTICRUNCH_VIA_FORK

@@ -902,7 +902,7 @@ long BufferFetchFile( Client *client, int break_pending,
       scratch[0] = '\0';
       if (projtrans_su)
       {
-        sprintf(scratch, "(%lu.%02lu stats units) ",
+        snprintf(scratch, sizeof(scratch), "(%lu.%02lu stats units) ",
                 projtrans_su/100,projtrans_su%100);
       }
       LogScreen("\n");

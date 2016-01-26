@@ -1014,7 +1014,7 @@ const char *CliGetTimeString( const struct timeval *tv, int strtype )
     int days = (longtime / 86400UL);
     if (days < 0 || days > 365)
       return "-.--:--:--.--";
-    sprintf( hourstring,  "%d.%02d:%02d:%02d.%02d", (int) (longtime / 86400UL),
+    snprintf( hourstring, sizeof(hourstring), "%d.%02d:%02d:%02d.%02d", (int) (longtime / 86400UL),
       (int) ((longtime % 86400L) / 3600UL), (int) ((longtime % 3600UL)/60),
       (int) (longtime % 60), (int) ((tv->tv_usec/10000L)%100) );
       //if ((longtime / 86400UL)==0 ) //don't show days if not needed
@@ -1055,7 +1055,7 @@ const char *CliGetTimeString( const struct timeval *tv, int strtype )
     if (strtype == 3) // "yyyy/mm/dd hh:mm:ss" (cvs/iso format, implied utc)
     {
       static char timestring3[4+   4 +1 +2+1 +2+1 +2+1 +2+1+2  ];
-      sprintf( timestring3,      "%04d/%02d/%02d %02d:%02d:%02d",
+      snprintf( timestring3, sizeof(timestring3), "%04d/%02d/%02d %02d:%02d:%02d",
                gmt->tm_year+1900, gmt->tm_mon + 1, gmt->tm_mday,
                gmt->tm_hour,  gmt->tm_min, gmt->tm_sec );
       timestr = (const char *)&timestring3[0];
@@ -1063,7 +1063,7 @@ const char *CliGetTimeString( const struct timeval *tv, int strtype )
     else if (strtype == 4) // yymmddhh (bugzilla version date format)
     {
       static char timestring4[4+  2   +2  +2  +2 ];
-      sprintf( timestring4,     "%02d%02d%02d%02d",
+      snprintf( timestring4, sizeof(timestring4), "%02d%02d%02d%02d",
                gmt->tm_year%100, gmt->tm_mon + 1, gmt->tm_mday,
                gmt->tm_hour );
       timestr = (const char *)&timestring4[0];
@@ -1072,7 +1072,7 @@ const char *CliGetTimeString( const struct timeval *tv, int strtype )
     {
       // old: "04/03/98 11:22:33 GMT"
       static char timestringX[8+  2+1 +2+1+2 +1 +2+1+2 +1+2 +1+3  ]; //21 or 23
-      sprintf( timestringX,    "%02d/%02d/%02d %02d:%02d:%02d GMT",
+      snprintf( timestringX, sizeof(timestringX), "%02d/%02d/%02d %02d:%02d:%02d GMT",
                gmt->tm_mon + 1, gmt->tm_mday,
                gmt->tm_year%100, gmt->tm_hour,
                gmt->tm_min, gmt->tm_sec );
@@ -1082,7 +1082,7 @@ const char *CliGetTimeString( const struct timeval *tv, int strtype )
     {                      // ie `date -u` without year
       // new: "Apr 03 11:22:33 UTC" year = gmt->tm_year%100,
       static char timestring1[4+ 3+1 +2+1 +2+1 +2+1 +2+1+3]; // = 19
-      sprintf( timestring1,     "%s %02d %02d:%02d:%02d %s",
+      snprintf( timestring1, sizeof(timestring1), "%s %02d %02d:%02d:%02d %s",
               monnames[gmt->tm_mon%12], gmt->tm_mday,
               gmt->tm_hour, gmt->tm_min, gmt->tm_sec,
               ((lasttype == 5)?("ZTZ"):("UTC")) );

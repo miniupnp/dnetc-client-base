@@ -255,7 +255,7 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
               pid_t thatpid = (pid_t)atoi(dp->d_name);
               if (thatpid == 0 /* .,..,curproc,etc */ || thatpid == ourpid)
                 continue;
-              sprintf( buffer, "/proc/%s/cmdline", dp->d_name );
+              snprintf( buffer, sizeof(buffer), "/proc/%s/cmdline", dp->d_name );
               if (( file = fopen( buffer, "r" ) ) == ((FILE *)0))
                 continue; /* already died */
               len = fread( buffer, 1, sizeof(buffer), file );
@@ -287,7 +287,7 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
                   if (strcmp(procname,binnames[bin_index])==0)
                   {
                     int dont_count_it = 0;
-                    sprintf( buffer, "/proc/%s/status", dp->d_name );
+                    snprintf( buffer, sizeof(buffer), "/proc/%s/status", dp->d_name );
                     file = fopen( buffer, "r" );
                     if (file)
                     {
@@ -412,7 +412,7 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
             #if (ULONG_MAX == 0xffffffff) /* 32bit client */
             if (!loop0_quiet && kill_found == -1 && errno == EOVERFLOW)
             {
-              sprintf(buffer, "%s is not supported by 32bit clients on "
+              snprintf(buffer, sizeof(buffer), "%s is not supported by 32bit clients on "
                               "64bit HP/UX", thisarg );
               ConOutErr(buffer);
               kill_found = -2; /* don't print anything else */
@@ -577,12 +577,12 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
           if (!loop0_quiet && kill_found >= -1)
           {
             if (kill_found == -1)
-              sprintf( buffer, "%s failed. Unable to get pid list", thisarg );
+              snprintf( buffer, sizeof(buffer), "%s failed. Unable to get pid list", thisarg );
             else if (kill_found == 0)
-              sprintf(buffer,"No distributed.net clients were found. "
+              snprintf(buffer,sizeof(buffer),"No distributed.net clients were found. "
                              "None %s.", dowhat_descrip );
             else
-              sprintf(buffer,"%u distributed.net client%s %s. %u failure%s%s%s%s.",
+              snprintf(buffer,sizeof(buffer),"%u distributed.net client%s %s. %u failure%s%s%s%s.",
                        kill_ok,
                        ((kill_ok==1)?(" was"):("s were")),
                        dowhat_descrip,
@@ -622,13 +622,13 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
           if (!loop0_quiet)
           {
             if (rc < 0)
-              sprintf(scratch,"No distributed.net clients are currently running. "
+              snprintf(scratch, sizeof(scratch),"No distributed.net clients are currently running. "
                               "None were %s.", dowhat_descrip);
             else if (rc > 0)
-              sprintf(scratch,"One or more distributed.net clients were found "
+              snprintf(scratch, sizeof(scratch), "One or more distributed.net clients were found "
                               "but one or more could not be %s.\n", dowhat_descrip);
             else
-              sprintf(scratch,"One or more distributed.net clients were found "
+              snprintf(scratch, sizeof(scratch), "One or more distributed.net clients were found "
                               "and have been requested to %s.", thisarg+1 );
             ConOutModal(scratch);
           }
@@ -667,13 +667,13 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
           if (!loop0_quiet)
           {
             if (rc == 0)
-              sprintf(scratch,"No distributed.net clients are currently running. "
+              snprintf(scratch, sizeof(scratch), "No distributed.net clients are currently running. "
                               "None were %s.", dowhat_descrip);
             else if (rc < 0)
-              sprintf(scratch,"One or more distributed.net clients were found "
+              snprintf(scratch, sizeof(scratch), "One or more distributed.net clients were found "
                               "but one or more could not be %s.\n", dowhat_descrip);
             else
-              sprintf(scratch,"One or more distributed.net clients were found "
+              snprintf(scratch, sizeof(scratch), "One or more distributed.net clients were found "
                               "and have been requested to %s.", thisarg+1 );
             ConOutModal(scratch);
           }
@@ -755,7 +755,7 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
       }
       if (not_supported)
       {
-        sprintf(scratch,"%s is not supported for this platform.\n",thisarg);
+        snprintf(scratch,sizeof(scratch),"%s is not supported for this platform.\n",thisarg);
         ConOutErr(scratch);
         retcode = 0;
       }
@@ -978,7 +978,7 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
               strcpy(scratch,"(auto/work-unit-based)");
               n = client->timethreshold[contest];
               if (n > 0)
-                sprintf(scratch,"%d hour%s", n, ((n==1)?(""):("s")) );
+                snprintf(scratch,sizeof(scratch),"%d hour%s", n, ((n==1)?(""):("s")) );
               LogScreenRaw("%s fetch time threshold set to %s\n",
                 cname, scratch );
             }
@@ -999,7 +999,7 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
                     n = client->outthreshold[contest];  
                   #endif
                   if (n > 0)
-                    sprintf(scratch,"%d",n);
+                    snprintf(scratch,sizeof(scratch),"%d",n);
                   LogScreenRaw("%s work-unit-based %s threshold set to %s\n",
                      cname, ((apos==1)?("fetch"):("flush")), scratch );
                   if (contest != OGR_P2 && contest != OGR_NG && client->timethreshold[contest] <= 0)
@@ -1716,7 +1716,7 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
           int contest = __arg2cname(argvalue, CONTEST_COUNT);
           if (contest >= CONTEST_COUNT || !IsProblemLoadPermitted(-1, contest))
           {
-            sprintf(scratch, "Unknown contest \"%.30s\".\n", argvalue);
+            snprintf(scratch, sizeof(scratch), "Unknown contest \"%.30s\".\n", argvalue);
             ConOutErr(scratch);
             retcode = 3;
           }
@@ -1735,7 +1735,7 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
                 }
                 else
                 {
-                  sprintf(scratch, "Core #%d is not available on this machine.\n",
+                  snprintf(scratch, sizeof(scratch), "Core #%d is not available on this machine.\n",
                         corenum);
                   ConOutErr(scratch);
                   retcode = 3;
@@ -1743,7 +1743,7 @@ static int __parse_argc_argv( int misc_call, int argc, const char *argv[],
               }
               else
               {
-                sprintf(scratch, "Core #%d doesn't exist for contest \"%.30s\".\n",
+                snprintf(scratch, sizeof(scratch), "Core #%d doesn't exist for contest \"%.30s\".\n",
                       corenum, argvalue);
                 ConOutErr(scratch);
                 retcode = 3;

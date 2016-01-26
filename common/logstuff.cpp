@@ -212,11 +212,11 @@ static const char *__get_logname( int logfileType, int logfileLimit,
             static const char *monnames[] = {
                "jan","feb","mar","apr","may","jun",
                "jul","aug","sep","oct","nov","dec" };
-            sprintf( rotsuffix, "%02d%s", (tm_year%100), monnames[tm_mon] );
+            snprintf( rotsuffix, sizeof(rotsuffix), "%02d%s", (tm_year%100), monnames[tm_mon] );
           }
           else if (logfileLimit == 365) /* annually */
           {
-            sprintf( rotsuffix, "%04d", tm_year+1900 );
+            snprintf( rotsuffix, sizeof(rotsuffix), "%04d", tm_year+1900 );
           }
           else if (logfileLimit == 7) /* weekly */
           {
@@ -235,7 +235,7 @@ static const char *__get_logname( int logfileType, int logfileLimit,
             L = d4 / 1460;
             week = (((d4 - L) % 365) + L) / 7 + 1;
             year += ((week == 1) && (month == 12)) - ((week > 51) && (month == 1));
-            sprintf( rotsuffix, "%02dw%02d", (year % 100), week );
+            snprintf( rotsuffix, sizeof(rotsuffix), "%02dw%02d", (year % 100), week );
           }
           else /* anything else: daily = 1, fortnightly = 14 etc */
           {
@@ -260,7 +260,7 @@ static const char *__get_logname( int logfileType, int logfileLimit,
               jdn -= (jdn % logfileLimit); /* backoff to beginning of period */
               _jdn2ymd( jdn, year, month, day );
             } /* not daily */
-            sprintf( rotsuffix, "%02d%02d%02d", (year%100), month, day );
+            snprintf( rotsuffix, sizeof(rotsuffix), "%02d%02d%02d", (year%100), month, day );
           }
           strcat(rotsuffix, EXTN_SEP"log");
           strncpy(buffer, logstatics.logfile, buflen );
@@ -509,7 +509,7 @@ void LogWithPointer( int loggingTo, const char *format, va_list *arglist )
     if ( arglist == NULL )
       strcat( msgbuffer, format );
     else
-      vsprintf( msgbuffer, format, *arglist );
+      vsnprintf( msgbuffer, sizeof(msgbuffer), format, *arglist );
     msglen = strlen( msgbuffer );
 
     if ( msglen == 0 )
@@ -988,7 +988,7 @@ static int __do_crunchometer( int event_disp_format,
     }
     else
     {
-      i = sprintf(buffer,"\r%s: rate: ", CliGetContestNameFromID(cont_i));
+      i = snprintf(buffer, sizeof(buffer), "\r%s: rate: ", CliGetContestNameFromID(cont_i));
       ProblemComputeRate( cont_i, 0, 0, ratehi, ratelo, 0, 0,
                           &buffer[i], sizeof(buffer)-i );
       strcat(buffer, "/sec");
@@ -1073,12 +1073,12 @@ static int __do_crunchometer( int event_disp_format,
           else if (girc != -1)
           {
             if (load_problem_count > 1) {
-              sprintf(buffer, "%s #%c:%s [%s]", info.name, ProblemLetterId(prob_i), info.cwpbuf,
+              snprintf(buffer, sizeof(buffer), "%s #%c:%s [%s]", info.name, ProblemLetterId(prob_i), info.cwpbuf,
                     U64stringify(blkdone, sizeof(blkdone),
                     info.dcounthi, info.dcountlo, 0, info.unit));
             }
             else {
-              sprintf(buffer, "%s:%s [%s]", info.name, info.cwpbuf,
+              snprintf(buffer, sizeof(buffer), "%s:%s [%s]", info.name, info.cwpbuf,
                     U64stringify(blkdone, sizeof(blkdone),
                                  info.dcounthi, info.dcountlo, 0, info.unit));
             }
@@ -1160,7 +1160,7 @@ static int __do_crunchometer( int event_disp_format,
       if ( percent >= 100 )
       { strcpy( bufptr, "100" ); bufptr+=sizeof("100"); /*endperc=0;*/ break;}
       else if ( ( percent % 10 ) == 0 )
-      { sprintf( bufptr, "%d%%", (int)(percent) ); bufptr+=3; }
+      { snprintf( bufptr, sizeof(buffer)-(bufptr-buffer), "%d%%", (int)(percent) ); bufptr+=3; }
       else if ( restartperc == percent)
       { *bufptr++='R'; }
       else if (((percent&1)?(percent<90):(percent>90)))
@@ -1211,7 +1211,7 @@ static int __do_crunchometer( int event_disp_format,
           logstatics.lastwasperc = 1; //(endperc != 0); //percbar requires reset
         }
       }
-      sprintf(buffer, "%u%%\n", endperc);
+      snprintf(buffer, sizeof(buffer), "%u%%\n", endperc);
       ClientEventSyncPost( CLIEVENT_CLIENT_CRUNCHOMETER, buffer, -1 );
     }
   } /* percent based dotdotdot */

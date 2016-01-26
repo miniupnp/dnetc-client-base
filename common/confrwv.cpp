@@ -163,6 +163,7 @@ static int _readwrite_hostname_and_port( int aswrite, const char *fn,
   char hostbuf[sizeof(buffer)]; /* needed for multiple parse */
   unsigned int len;
   int pos = 0;
+  char null_hostname[] = "";
 
   if (!aswrite)
   {
@@ -217,7 +218,7 @@ static int _readwrite_hostname_and_port( int aswrite, const char *fn,
             hostbuf[len-17] = '9';
           if (portnum)
           {
-            sprintf(&hostbuf[len], ":%d", portnum);
+            snprintf(&hostbuf[len], sizeof(hostbuf)-len, ":%d", portnum);
             len = strlen(hostbuf);
           }    
           if ((len + 3) >= hnamelen)
@@ -250,12 +251,12 @@ static int _readwrite_hostname_and_port( int aswrite, const char *fn,
         foundport = 0;
     }
     if (!hostname)
-      hostname = "";
+      hostname = null_hostname;
     len = 0;
     hostbuf[len] = '\0';
     if (foundport)
     {
-      sprintf(hostbuf, "*:%d;", foundport);
+      snprintf(hostbuf, sizeof(hostbuf), "*:%d;", foundport);
       len = strlen(hostbuf);
     }
     /* sanitize hostname */
@@ -299,7 +300,7 @@ static int _readwrite_fwallstuff(int aswrite, const char *fn, Client *client)
 {
   char buffer[128];
   char scratch[2];
-  char *that;
+  const char *that;
 
   if (!aswrite) /* careful. 'aswrite' may change */
   {
@@ -547,7 +548,7 @@ static int __readwrite_minutes(const char *sect, const char *keyname,
     if (minutes != defaultval || 
         GetPrivateProfileStringB(sect,keyname, "",buffer,sizeof(buffer),fn))  
     {
-      sprintf(buffer,"%u:%02u",((unsigned)minutes/60),((unsigned)minutes%60));
+      snprintf(buffer,sizeof(buffer),"%u:%02u",((unsigned)minutes/60),((unsigned)minutes%60));
       return WritePrivateProfileStringB( sect, keyname, buffer, fn );
     }
     return 0;
@@ -1404,7 +1405,7 @@ static void __XSetProfileInt( const char *sect, const char *key,
     }
     else
     {
-      sprintf(buffer,"%ld",(long)newval);
+      snprintf(buffer,sizeof(buffer),"%ld",(long)newval);
       WritePrivateProfileStringB( sect, key, buffer, fn );
     }
   }

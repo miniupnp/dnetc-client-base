@@ -712,7 +712,8 @@ unsigned int GetPrivateProfileIntB( const char *sect, const char *key,
 int WritePrivateProfileIntB( const char *sect, const char *key,
                              int value, const char *filename )
 {
-  char buffer[(sizeof(long)+1)*3]; sprintf(buffer, "%lu", ((long)(value)) );
+  char buffer[(sizeof(long)+1)*3];
+  snprintf(buffer, sizeof(buffer), "%lu", ((long)(value)) );
   return WritePrivateProfileStringB( sect, key, buffer, filename );
 }
 

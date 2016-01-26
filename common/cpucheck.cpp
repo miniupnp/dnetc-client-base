@@ -2753,7 +2753,7 @@ void GetProcessorInformationStrings( const char ** scpuid, const char ** smaxscp
       strcat( namebuf, "LZCNT ");
     }
   #elif (CLIENT_CPU == CPU_POWERPC) || (CLIENT_CPU == CPU_CELLBE)
-    sprintf(namebuf, "%08lX\n\tname: %s", rawid, cpuid_s );
+    snprintf(namebuf, sizeof(namebuf), "%08lX\n\tname: %s", rawid, cpuid_s );
   #else
     sprintf(namebuf, "%ld\n\tname: %s", rawid, cpuid_s );
   #endif
@@ -2789,7 +2789,7 @@ void GetProcessorInformationStrings( const char ** scpuid, const char ** smaxscp
   else
   {
     static char foundcpu_b[6];
-    sprintf( foundcpu_b, "%d", cpucount );
+    snprintf( foundcpu_b, sizeof(foundcpu_b), "%d", cpucount );
     foundcpu_s = ((const char *)(&foundcpu_b[0]));
   }
 
